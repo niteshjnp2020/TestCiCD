@@ -1,0 +1,83 @@
+﻿name: CICD Pipeline
+
+
+on: 
+  push:
+         branches:
+            - dev
+  pull_request:
+    branches:
+         - main
+
+jobs:
+  build:
+    #runs-on: self-hosted
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Publish
+        run: dotnet publish --configuration Release --no-build --output ./publish
+
+      # ✅ NEW STEP – copy publish output to your local folder
+      
+      # - name: copy to local folder
+      #   run: |
+      #     if not exist "F:\Publish code\TestCICD" mkdir "F:\Publish code\TestCICD"
+      #     xcopy  ".\publish\*" "F:\Publish code\TestCICD\" /E /I /Y
+
+      # Start App
+      - name : Start Application
+        run: |
+           dotnet ./publish/AppCICD.dll &
+           sleep 10
+
+      # Verify App is running
+      - name  : Verify Application is Running
+        run: |
+          pgrep -f "AppCICD.dll" || (echo "Application is not running" && exit 1)
+
+
+      # Health check
+      - name: Health Check
+        run: |
+          response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:5000/health)
+          if [ "$response" -ne 200 ]; then
+            echo "Health check failed with status code $response"
+            exit 1
+          else
+            echo "Health check passed with status code $response"
+          fi
+
+       # Failure Summery 
+      - name: Failure Summary
+        if: failure()
+        run: |
+         echo "Pipeline Failed"
+         echo "Workflow : ${{ github.workflow }}"
+         echo "Job : ${{ github.job }}"
+         echo "The build or tests have failed. Please check the logs for details."
+
+       # Archive production artifacts      
+      - name: Archive Production Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-artifacts
+          path: ./publish
+     
