@@ -64,7 +64,17 @@ jobs:
           else
             echo "Health check passed with status code $response"
           fi
-      
+
+       # Failure Summery 
+      - name: Failure Summary
+        if: failure()
+        run: |
+         echo "Pipeline Failed"
+         echo "Workflow: ${{ github.workflow }}""
+         echo "Job: ${{ github.job }}"
+         echo "The build or tests have failed. Please check the logs for details."
+
+       # Archive production artifacts      
       - name: Archive Production Artifacts
         uses: actions/upload-artifact@v4
         with:
