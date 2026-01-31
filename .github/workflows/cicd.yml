@@ -42,6 +42,29 @@ jobs:
       #     if not exist "F:\Publish code\TestCICD" mkdir "F:\Publish code\TestCICD"
       #     xcopy  ".\publish\*" "F:\Publish code\TestCICD\" /E /I /Y
 
+      # Start App
+      - name : Start Application
+        run: |
+           dotnet ./publish/AppCICD.dll &
+           sleep 10
+
+      # Verify App is running
+      - name  : Verify Application is Running
+        run: |
+          pgrep -f "AppCICD.dll" || (echo "Application is not running" && exit 1)
+
+
+      # Health check
+      - name: Health Check
+        run: |
+          response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:5000/health)
+          if [ "$response" -ne 200 ]; then
+            echo "Health check failed with status code $response"
+            exit 1
+          else
+            echo "Health check passed with status code $response"
+          fi
+      
       - name: Archive Production Artifacts
         uses: actions/upload-artifact@v4
         with:
