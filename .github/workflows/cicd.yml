@@ -75,10 +75,20 @@ jobs:
       # Health check
       - name: Health Check
         run: |
-         set retries=10 :retry curl -f http://localhost:5000/health >nul 2>&1
-         if %errorlevel%==0 (echo Health check passed goto :eof )
-         if %retries%==0 (echo Health check failed exit 1) set /a retries-=1
-         ping 127.0.0.1 -n 3 >nul  goto retry
+          set retries=10
+          :retry
+          curl -f http://localhost:5000/health >nul 2>&1
+          if %errorlevel%==0 (
+            echo Health check passed
+            goto :eof
+          )
+          if %retries%==0 (
+            echo Health check failed
+            exit 1
+          )
+          set /a retries-=1
+          ping 127.0.0.1 -n 3 >nul
+          goto retry
 
        # Failure Summery 
       - name: Failure Summary
