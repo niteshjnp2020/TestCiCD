@@ -75,13 +75,8 @@ jobs:
       # Health check
       - name: Health Check
         run: |
-          response=$(curl --write-out "%{http_code}" --silent --output /dev/null http://localhost:5000/health)
-          if [ "$response" -ne 200 ]; then
-            echo "Health check failed with status code $response"
-            exit 1
-          else
-            echo "Health check passed with status code $response"
-          fi
+          curl -f http://localhost:5000/health >nul 2>&1 if errorlevel 1 (echo Health check failed
+          exit 1) else (echo Health check passed)
 
        # Failure Summery 
       - name: Failure Summary
