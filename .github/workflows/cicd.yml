@@ -51,14 +51,14 @@ jobs:
           xcopy  "publish\*" "F:\Publish code\TestCICD\" /E /I /Y
       
       # Start IIS App Pool
-      - name: Start App Pool
-        run: |
-           %windir%\system32\inetsrv\appcmd start apppool /apppool.name:"TestCICDAppPool"
+      # - name: Start App Pool
+      #   run: |
+      #      %windir%\system32\inetsrv\appcmd start apppool /apppool.name:"TestCICDAppPool"
 
-      # # Start App
-      # - name : Start Application from Local Folder
-      #   run: | 
-      #      start "" dotnet "F:\Publish code\TestCICD\AppCICD.dll"
+      # Start App
+      - name : Start Application from Local Folder
+        run: | 
+           start "" dotnet "F:\Publish code\TestCICD\AppCICD.dll"
       
       # Wait for app startup
       - name : Wait for App
