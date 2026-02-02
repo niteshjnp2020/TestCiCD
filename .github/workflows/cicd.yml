@@ -11,8 +11,8 @@ on:
 
 jobs:
   build:
-    #runs-on: self-hosted
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    #runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -37,16 +37,19 @@ jobs:
 
       # ✅ NEW STEP – copy publish output to your local folder
       
-      # - name: copy to local folder
-      #   run: |
-      #     if not exist "F:\Publish code\TestCICD" mkdir "F:\Publish code\TestCICD"
-      #     xcopy  ".\publish\*" "F:\Publish code\TestCICD\" /E /I /Y
+      - name: copy to local folder
+        run: |
+          if not exist "F:\Publish code\TestCICD" mkdir "F:\Publish code\TestCICD"
+          xcopy  "publish\*" "F:\Publish code\TestCICD\" /E /I /Y
 
       # Start App
-      - name : Start Application
-        run: |
-           dotnet ./publish/AppCICD.dll &
-           sleep 10
+      - name : Start Application from Local Folder
+        run: | 
+           powerShell -command "Start-Process dotnet 'F:\Publish code\TestCICD\AppCICD.dll'"
+      
+      # Wait for app startup
+      - name : Wait for App
+        run: powershell -Command "Start-Sleep -Seconds 10"
 
       # Verify App is running
       - name  : Verify Application is Running
