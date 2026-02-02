@@ -73,26 +73,10 @@ jobs:
 
 
       # Health check
-      # - name: Health Check
-      #   run: |
-      #     setlocal EnableDelayedExpansion
-      #     set retries=10
-
-      #     :retry
-      #     curl -f http://localhost:5000/health >nul 2>&1
-      #     if !errorlevel! EQU 0 (
-      #       echo Health check passed
-      #       exit /b 0
-      #     )
-          
-      #     if !retries! EQU 0 (
-      #       echo Health check failed
-      #       exit /b 1
-      #     )
-          
-      #     set /a retries-=1
-      #     ping 127.0.0.1 -n 3 >nul
-      #     goto retry
+      - name: Health Check
+        run: |
+          curl -f http://localhost/health >nul 2>&1 if errorlevel 1 (echo Health check failed
+          exit 1) else (echo Health check passed)
 
        # Failure Summery 
       - name: Failure Summary
