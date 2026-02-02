@@ -60,9 +60,11 @@ jobs:
         run: | 
            start "" dotnet "F:\Publish code\TestCICD\AppCICD.dll"
       
-      # Wait for app startup
-      - name : Wait for App
-        run: timeout /t 10 /nobreak
+     # Wait for app startup
+      - name: Wait for App
+        shell: powershell
+        run: Start-Sleep -Seconds 10
+
 
       # Verify App is running
       - name  : Verify Application is Running
