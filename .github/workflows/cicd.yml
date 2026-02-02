@@ -14,6 +14,9 @@ jobs:
     runs-on: self-hosted
     #runs-on: ubuntu-latest
 
+    defaults:
+          run:
+           shell: cmd
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -45,16 +48,17 @@ jobs:
       # Start App
       - name : Start Application from Local Folder
         run: | 
-           powerShell -command "Start-Process dotnet 'F:\Publish code\TestCICD\AppCICD.dll'"
+           start "" dotnet "F:\Publish code\TestCICD\AppCICD.dll"
       
       # Wait for app startup
       - name : Wait for App
-        run: powershell -Command "Start-Sleep -Seconds 10"
+        run: timeout /t 10 /nobreak
 
       # Verify App is running
       - name  : Verify Application is Running
         run: |
-          pgrep -f "AppCICD.dll" || (echo "Application is not running" && exit 1)
+          tasklist | findstr /I "dotnet.exe" >nul
+          if errorlevel 1 (echo Application is not running exit 1) else ( echo Application is running)
 
 
       # Health check
