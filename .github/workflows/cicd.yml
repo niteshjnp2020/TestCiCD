@@ -62,8 +62,7 @@ jobs:
       
      # Wait for app startup
       - name: Wait for App
-        shell: powershell
-        run: Start-Sleep -Seconds 10
+        run: ping 127.0.0.1 -n 11 >nul
 
 
       # Verify App is running
