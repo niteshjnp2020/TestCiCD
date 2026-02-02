@@ -40,9 +40,9 @@ jobs:
 
 
       # Stop IIS App Pool
-      - name: Stop App Pool
-        run: |
-          %windir%\system32\inetsrv\appcmd stop apppool /apppool.name:"TestCICDAppPool"
+      # - name: Stop App Pool
+      #   run: |
+      #     %windir%\system32\inetsrv\appcmd stop apppool /apppool.name:"TestCICDAppPool"
 
       # ✅ NEW STEP – copy publish output to your local folder      
       - name: copy to local folder
@@ -55,10 +55,10 @@ jobs:
         run: |
            %windir%\system32\inetsrv\appcmd start apppool /apppool.name:"TestCICDAppPool"
 
-      # Start App
-      - name : Start Application from Local Folder
-        run: | 
-           start "" dotnet "F:\Publish code\TestCICD\AppCICD.dll"
+      # # Start App
+      # - name : Start Application from Local Folder
+      #   run: | 
+      #      start "" dotnet "F:\Publish code\TestCICD\AppCICD.dll"
       
       # Wait for app startup
       - name : Wait for App
